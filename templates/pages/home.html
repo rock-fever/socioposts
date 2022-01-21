@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head_title %} Home {% endblock head_title %}
+{% block content %}
+Welcome to Reunion
+<div id="posts">
+
+</div>
+<script>
+    const postsElement = document.querySelector('.posts')
+    const xhr = new XMLHttpRequest()
+    const method = "GET"
+    const url = "/posts"
+    const responseType = "json"
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function() {
+        const serverResponse = xhr.response
+        const listedItems = serverResponse.response
+        var finalPostStr=  ""
+        listedItems.innerHTML = "Loading..."
+    }
+    xhr.send()
+</script>
+{% endblock content %}
