@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .models import Post
 from .forms import PostForm
 from django.conf import settings
-from .serializers import PostSerializer, PostActionSerializer
+from .serializers import PostSerializer, PostActionSerializer, PostCreateSerializer
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
@@ -21,7 +21,7 @@ def home_view(request, *args, **kwargs):
 @permission_classes([IsAuthenticated])
 def post_create_view(request, *args, **kwargs):
     data = request.POST or None
-    serializer = PostSerializer(data=request.POST)
+    serializer = PostCreateSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
@@ -57,6 +57,7 @@ def post_action_view(request, *args, **kwargs):
         data = serializer.validated_data
         post_id = data.get("id")
         action = data.get("action")
+        content = data.get("content")
 
         qs = Post.objects.filter(id=post_id)
         if not qs.exists():
@@ -68,8 +69,10 @@ def post_action_view(request, *args, **kwargs):
             return Response(serializer.data, status = 200)
         elif action == "unlike":
             obj.likes.remove(request .user)
-        elif action == "retweet":
-            pass 
+        elif action == "repost":
+            new_post = Post.objects.create(user=request.user, parent=obj, content=content)
+            serializer = PostSerializer(new_post)
+            return Response(serializer.data, status = 200)
     return Response({}, status = 200)
 
 
