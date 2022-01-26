@@ -95,7 +95,7 @@
     function loadPosts(postsElement){
         const xhr = new XMLHttpRequest()
         const method = "GET"
-        const url = "/posts"
+        const url = "/api/posts"
         const responseType = "json"
         xhr.responseType = responseType
         xhr.open(method, url)
@@ -134,7 +134,7 @@
 
     function handlePostActionBtn(post_id, currentCount, action){
         const csrf_token = getCookie('csrftoken')
-        const url = "/api/posts/action"
+        const url = "/api/posts/action/"
         const method = "POST"
         const data = JSON.stringify({
             id: post_id,
